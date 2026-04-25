@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Roadmap Generator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f0f0f; color: #e8e8e8; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+    .container { max-width: 680px; width: 100%; }
+    h1 { font-size: 28px; font-weight: 600; margin-bottom: 6px; }
+    .sub { font-size: 15px; color: #888; margin-bottom: 2rem; }
+    label { font-size: 13px; color: #888; display: block; margin-bottom: 6px; }
+    input, select {
+      width: 100%; padding: 11px 14px; font-size: 14px;
+      border: 1px solid #2a2a2a; border-radius: 10px;
+      background: #1a1a1a; color: #e8e8e8; margin-bottom: 1rem;
+      outline: none; transition: border 0.2s;
+    }
+    input:focus, select:focus { border-color: #444; }
+    select option { background: #1a1a1a; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 500px) { .row { grid-template-columns: 1fr; } }
+    button {
+      width: 100%; padding: 13px; font-size: 15px; font-weight: 500;
+      border: 1px solid #333; border-radius: 10px;
+      background: #1a1a1a; color: #e8e8e8;
+      cursor: pointer; margin-top: 4px; transition: background 0.15s;
+    }
+    button:hover { background: #222; }
+    .week-card {
+      border: 1px solid #222; border-radius: 14px;
+      padding: 1.2rem 1.4rem; margin-bottom: 14px; background: #141414;
+    }
+    .week-label { font-size: 11px; font-weight: 600; color: #555; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+    .week-focus { font-size: 16px; font-weight: 600; color: #e8e8e8; margin-bottom: 12px; }
+    .tasks { list-style: none; }
+    .tasks li { font-size: 14px; color: #999; padding: 4px 0 4px 18px; position: relative; line-height: 1.6; }
+    .tasks li::before { content: "—"; position: absolute; left: 0; color: #444; }
+    .tag { display: inline-block; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin: 4px 4px 0 0; background: #1e1e1e; color: #777; border: 1px solid #2a2a2a; }
+    .tip-box { background: #161616; border: 1px solid #222; border-radius: 10px; padding: 14px 18px; margin-top: 1rem; font-size: 14px; color: #888; line-height: 1.7; }
+    .error { color: #e05c5c; font-size: 13px; margin-top: 8px; }
+    .small-btn { font-size: 13px; padding: 9px; margin-top: 10px; }
+    .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 20px; background: #1e1e1e; color: #555; border: 1px solid #2a2a2a; margin-bottom: 1.5rem; }
+    footer { text-align: center; margin-top: 3rem; font-size: 12px; color: #444; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="badge">Free tool — no signup needed</div>
+  <h1>AI Roadmap Generator</h1>
+  <p class="sub">Get your personalized 30-day AI upskilling plan</p>
+
+  <div id="form-section">
+    <div class="row">
+      <div>
+        <label>Your field / job title</label>
+        <input type="text" id="jobtitle" placeholder="e.g. Data Analyst, Student" />
+      </div>
+      <div>
+        <label>AI skill level</label>
+        <select id="level">
+          <option value="beginner">Beginner — no experience</option>
+          <option value="basic">Basic — used ChatGPT a bit</option>
+          <option value="intermediate">Intermediate — some projects</option>
+        </select>
+      </div>
+    </div>
+    <label>Your goal (optional)</label>
+    <input type="text" id="goal" placeholder="e.g. get an AI internship, build projects" />
+    <button onclick="generate()">Generate my roadmap →</button>
+    <div id="err" class="error"></div>
+  </div>
+
+  <div id="result-section" style="display:none"></div>
+
+  <footer>Built with AI · Free to use · Share with anyone</footer>
+</div>
+
+<script>
+const roadmaps = {
+  beginner: [
+    { focus: "AI foundations & mindset", tasks: ["Watch 'AI for Everyone' by Andrew Ng (free on Coursera)", "Read what AI, ML, and Data Science actually mean — write your own definitions", "Follow 5 AI professionals on LinkedIn and take notes on what they post"], resources: ["Coursera — AI for Everyone", "YouTube: 3Blue1Brown"] },
+    { focus: "Prompt engineering basics", tasks: ["Practice writing prompts in ChatGPT or Claude for 30 mins daily", "Learn the 5 key prompting techniques: role, context, format, examples, constraints", "Rebuild one of your daily tasks using AI (email, summary, plan)"], resources: ["Anthropic prompt engineering guide", "LearnPrompting.org"] },
+    { focus: "AI tools for your field", tasks: ["Pick 3 AI tools relevant to your field and test each one", "Document what each tool does well and where it fails", "Write a short comparison — use it as a LinkedIn post idea"], resources: ["theresanaiforthat.com", "Product Hunt AI tools"] },
+    { focus: "First mini-project", tasks: ["Build a simple AI-powered tool using no-code (n8n, Make, or Notion AI)", "Share your project on LinkedIn with what you learned", "Plan your next 30 days based on what excites you most"], resources: ["n8n.io (free)", "Make.com (free tier)"] }
+  ],
+  basic: [
+    { focus: "Python for AI — quick ramp", tasks: ["Complete Python basics on Kaggle Learn (free, 5 hours)", "Write a script that reads a CSV and prints basic stats", "Learn pandas: load, filter, and visualize a dataset"], resources: ["Kaggle Learn — Python", "pandas documentation"] },
+    { focus: "Machine learning concepts", tasks: ["Complete Kaggle's 'Intro to ML' course (free)", "Train your first model on the Titanic dataset", "Understand: overfitting, train/test split, accuracy"], resources: ["Kaggle Learn — Intro to ML", "Scikit-learn quickstart"] },
+    { focus: "AI APIs & integrations", tasks: ["Get a free API key (Gemini or Groq) and make your first API call", "Build a simple chatbot in Python using an AI API", "Add your own twist: make it answer questions about a topic you care about"], resources: ["Google AI Studio (free)", "Groq API (free tier)"] },
+    { focus: "Portfolio project", tasks: ["Build a small end-to-end project: data → model → output", "Push it to GitHub with a clear README", "Write a LinkedIn post explaining what you built and what you learned"], resources: ["GitHub (free)", "Streamlit — deploy free"] }
+  ],
+  intermediate: [
+    { focus: "LLMs & modern AI architecture", tasks: ["Read 'Attention is All You Need' summary (not the full paper)", "Understand RAG (Retrieval Augmented Generation) with a hands-on tutorial", "Build a simple RAG pipeline using LangChain or LlamaIndex"], resources: ["LangChain docs", "LlamaIndex quickstart"] },
+    { focus: "AI agents & automation", tasks: ["Build an AI agent that can search the web and summarize results", "Explore multi-step reasoning with function calling", "Automate one real workflow in your life or work with an agent"], resources: ["LangChain agents tutorial", "Anthropic tool use docs"] },
+    { focus: "Data pipelines for AI", tasks: ["Learn how to clean and prepare data for fine-tuning", "Explore vector databases: set up a free Pinecone or Chroma instance", "Build a semantic search tool on your own documents"], resources: ["Pinecone (free tier)", "Chroma DB (open source)"] },
+    { focus: "Deploy & share", tasks: ["Deploy your best project to Hugging Face Spaces or Streamlit Cloud", "Write a detailed case study: problem, approach, results, learnings", "Reach out to 3 AI professionals in your country and share your work"], resources: ["Hugging Face Spaces (free)", "Streamlit Community Cloud (free)"] }
+  ]
+};
+
+const tips = {
+  beginner: "You don't need to know everything — you just need to start. One hour a day for 30 days is 30 hours of real experience. That's more than most people ever do.",
+  basic: "The gap between 'I've used ChatGPT' and 'I build with AI' is smaller than you think. One project on GitHub is worth 10 certificates.",
+  intermediate: "Ship something real, even if it's imperfect. A deployed project that works beats a perfect project that no one sees."
+};
+
+function generate() {
+  const jobTitle = document.getElementById('jobtitle').value.trim();
+  const level = document.getElementById('level').value;
+  const goal = document.getElementById('goal').value.trim();
+  const errEl = document.getElementById('err');
+  errEl.textContent = '';
+  if (!jobTitle) { errEl.textContent = 'Please enter your field or job title.'; return; }
+
+  const weeks = roadmaps[level];
+  const tip = tips[level];
+
+  let html = `<h2 style="font-size:20px;font-weight:600;margin-bottom:8px">30-Day AI Roadmap for ${jobTitle}</h2>
+  <p style="font-size:14px;color:#888;margin-bottom:1.5rem;line-height:1.7">
+    A focused plan to go from your current level to confidently using AI in your field${goal ? ' — goal: ' + goal : ''}.
+  </p>`;
+
+  weeks.forEach((w, i) => {
+    html += `<div class="week-card">
+      <div class="week-label">Week ${i+1}</div>
+      <div class="week-focus">${w.focus}</div>
+      <ul class="tasks">${w.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
+      <div style="margin-top:12px">${w.resources.map(r=>`<span class="tag">${r}</span>`).join('')}</div>
+    </div>`;
+  });
+
+  html += `<div class="tip-box">${tip}</div>`;
+  html += `<button class="small-btn" onclick="reset()">Generate a new roadmap</button>`;
+
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('result-section').innerHTML = html;
+  document.getElementById('result-section').style.display = 'block';
+  window.scrollTo(0, 0);
+}
+
+function reset() {
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('form-section').style.display = 'block';
+}
+</script>
+</body>
+</html>
